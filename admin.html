@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Consulta</title>
+</head>
+<body>
+  <h2>Cadastrar Consulta</h2>
+  <form id="formConsulta">
+    <input type="text" id="nome" placeholder="Nome do paciente" required><br>
+    <input type="date" id="data" required><br>
+    <input type="time" id="hora" required><br>
+    <input type="tel" id="telefone" placeholder="WhatsApp (com DDD)" required><br>
+    <button type="submit">Salvar</button>
+  </form>
+
+  <script>
+    document.getElementById("formConsulta").addEventListener("submit", function(e){
+      e.preventDefault();
+      
+      const nome = document.getElementById("nome").value;
+      const data = document.getElementById("data").value;
+      const hora = document.getElementById("hora").value;
+      const telefone = document.getElementById("telefone").value.replace(/\D/g,''); // só números
+
+      // ID = telefone
+      const id = telefone; 
+      const linkConfirmacao = `https://minhaclinica.com/confirma.html?id=${id}`;
+
+      // Aqui você salvaria no banco de dados (ex: Firebase ou planilha)
+      console.log({id, nome, data, hora, telefone, confirmado:false});
+
+      // Mensagem pronta do WhatsApp
+      const msg = `Olá ${nome}, sua consulta está marcada para ${data} às ${hora}.
+Confirme aqui: ${linkConfirmacao}`;
+
+      const linkWhats = `https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`;
+
+      alert("Link WhatsApp: " + linkWhats);
+      window.open(linkWhats, "_blank");
+    });
+  </script>
+</body>
+</html>
