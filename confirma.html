@@ -2,34 +2,100 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Confirmação</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmação de Agendamento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 350px;
+    }
+    h2 {
+      color: #333;
+    }
+    p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+    .btn-whatsapp {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #25D366;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>Confirmação de Consulta</h2>
-  <p id="dados"></p>
-  <button id="btnConfirmar">✅ Confirmar</button>
+
+  <!-- Card de agendamento -->
+  <div class="card" id="agendamento" style="display:none;">
+    <h2>Agendamento Encontrado ✅</h2>
+    <p>Nome: <span id="nome"></span></p>
+    <p>Data: <span id="data"></span></p>
+    <p>Hora: <span id="hora"></span></p>
+    <p>Telefone: <span id="telefone"></span></p>
+    <a id="whatsapp-link" href="#" class="btn-whatsapp" target="_blank">Confirmar via WhatsApp</a>
+  </div>
+
+  <!-- Mensagem de não encontrado -->
+  <div class="card" id="nao-encontrado" style="display:none;">
+    <h2>Agendamento não encontrado ❌</h2>
+    <p>Verifique se o ID está correto.</p>
+  </div>
 
   <script>
-    // Pega o ID (telefone) da URL
+    // Pega o ID da URL
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get("id");
+    const id = urlParams.get('id');
 
-    const dadosConsulta = localStorage.getItem(id);
+    // Carrega o JSON de agendamentos
+    fetch('agendamentos.json')
+      .then(response => response.json())
+      .then(data => {
+        const agendamento = data.find(a => a.id === id);
 
-    if(dadosConsulta){
-      const consulta = JSON.parse(dadosConsulta);
-      document.getElementById("dados").innerText = 
-        `Paciente: ${consulta.nome}\nData: ${consulta.data} às ${consulta.hora}`;
-      
-      document.getElementById("btnConfirmar").onclick = function(){
-        consulta.confirmado = true;
-        localStorage.setItem(id, JSON.stringify(consulta));
-        alert("✅ Consulta confirmada com sucesso!");
-      }
-    } else {
-      document.getElementById("dados").innerText = "❌ Consulta não encontrada!";
-      document.getElementById("btnConfirmar").style.display = "none";
-    }
+        if (agendamento) {
+          // Preenche os dados
+          document.getElementById('nome').innerText = agendamento.nome;
+          document.getElementById('data').innerText = agendamento.data;
+          document.getElementById('hora').innerText = agendamento.hora;
+          document.getElementById('telefone').innerText = agendamento.telefone;
+
+          // Cria link do WhatsApp
+          const whatsappLink = `https://wa.me/${agendamento.telefone.replace(/\D/g,'')}?text=Olá ${encodeURIComponent(agendamento.nome)}, estou confirmando meu agendamento em ${encodeURIComponent(agendamento.data)} às ${encodeURIComponent(agendamento.hora)}.`;
+          document.getElementById('whatsapp-link').href = whatsappLink;
+
+          // Mostra card correto
+          document.getElementById('agendamento').style.display = 'block';
+          document.getElementById('nao-encontrado').style.display = 'none';
+        } else {
+          document.getElementById('agendamento').style.display = 'none';
+          document.getElementById('nao-encontrado').style.display = 'block';
+        }
+      })
+      .catch(err => {
+        console.error('Erro ao carregar JSON:', err);
+        document.getElementById('agendamento').style.display = 'none';
+        document.getElementById('nao-encontrado').style.display = 'block';
+      });
   </script>
+
 </body>
 </html>
+
+
