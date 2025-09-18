@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Cadastro de Consulta</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { margin: 5px 0; padding: 8px; width: 100%; max-width: 300px; }
+  </style>
 </head>
 <body>
   <h2>Cadastrar Consulta</h2>
@@ -34,8 +38,7 @@
       const linkConfirmacao = `https://luanabani.github.io/consulta/confirma.html?id=${id}`;
 
       // Mensagem pronta do WhatsApp
-      const msg = `Olá ${nome}, sua consulta está marcada para ${data} às ${hora}.
-Confirme aqui: ${linkConfirmacao}`;
+      const msg = `Olá ${nome}, sua consulta está marcada para ${data} às ${hora}.\nConfirme aqui: ${linkConfirmacao}`;
 
       const linkWhats = `https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`;
 
@@ -47,6 +50,3 @@ Confirme aqui: ${linkConfirmacao}`;
   </script>
 </body>
 </html>
-</html>
-
-
